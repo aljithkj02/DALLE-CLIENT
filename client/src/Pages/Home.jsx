@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import axios from 'axios'
 import { Card, Loader, FormField } from '../components';
 import config from '../config'
@@ -19,6 +19,8 @@ const Home = () => {
     const [loading, setLoading] = useState(false);
     const [allPosts, setAllPosts] = useState(null);
     const [searchText, setSeachText] = useState('');
+    const [searchedResults, setSearchedResults] = useState(null);
+    const debounceId = useRef(null);
 
     useEffect(() => {
         fetchPosts();
@@ -28,7 +30,6 @@ const Home = () => {
         setLoading(true);
         try {
             let response = await axios.get(`${config.API_URL}/api/v1/post`);
-            console.log(response.data.data)
             setAllPosts(response.data.data.reverse());
         } catch (err) {
             console.log(err);
@@ -36,6 +37,20 @@ const Home = () => {
         } finally {
             setLoading(false);
         }
+    }
+
+    const handleSearchChange = async (e) => {
+        debounceId.current && clearTimeout(debounceId.current);
+        setSeachText(e.target.value);
+
+        debounceId.current = setTimeout(() => {
+            const searchResults = allPosts.filter((item) => {
+                return ( 
+                    item.name.toLowerCase().includes(e.target.value.toLowerCase()) || 
+                    item.prompt.toLowerCase().includes(e.target.value.toLowerCase()) )
+            })
+            setSearchedResults(searchResults);
+        }, 1000);
     }
 
   return (
@@ -47,7 +62,14 @@ const Home = () => {
         </div>
 
         <div className="mt-16">
-            <FormField />
+            <FormField 
+                handleChange={ handleSearchChange  }
+                LabelName="Search posts"
+                type="text"
+                name="text"
+                placeholder="Search posts"
+                value={ searchText }
+            />
         </div>
 
         <div className="mt-10">
@@ -66,7 +88,7 @@ const Home = () => {
 
                         <div className="grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-3">
                             {(searchText)? (
-                                <RenderCards data={ allPosts } title="No search results found" />
+                                <RenderCards data={ searchedResults } title="No search results found" />
                             ): (
                                 <RenderCards data={ allPosts } title="No posts found" />
                             )}
