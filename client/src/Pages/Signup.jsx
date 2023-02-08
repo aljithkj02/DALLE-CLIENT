@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
-import axios from 'axios';
+import axios from 'axios'
 import { Loader, FormField } from '../components';
 import { Link, useNavigate } from 'react-router-dom'
-import config from '../config.js';
+import config from '../config'
 
-const Login = () => {
-    const [loading, setLoading] = useState(false);
+const Signup = () => {
     const [userData, setUserData] = useState({
-        email: '', 
+        name: '',
+        email: '',
         password: ''
     })
     const navigate = useNavigate();
@@ -19,35 +19,38 @@ const Login = () => {
         })
     }
 
-    const loginUser = async (e) => {
+    const signupUser = async (e) => { 
         e.preventDefault();
-        if(userData.email && userData.password){
+        if(userData.name && userData.email && userData.password){ 
             try {
-                setLoading(true);
-                let response = await axios.post(`${config.API_URL}/auth/login`, { ...userData });
-                console.log(response);
+                let response = await axios.post(`${config.API_URL}/auth/signup`, {...userData});
                 if(response.data.success){
                     alert(response.data.message);
-                    navigate('/');
+                    navigate('/')
                 }
             } catch (err) {
                 console.log(err);
                 alert(err.response.data.message);
-            } finally {
-                setLoading(false);
             }
         }
     }
   return (
     <section className="max-w-7xl mx-auto">
-        
         <div>
-            <h1 className="font-extrabold text-[32px] text-[#222328]">Login</h1>
-            <p className="mt-2 text-[#666e75] text-[16px] max-w-[600px]">Login and create images using your imaginary thoughts and share them with your friends</p>
+            <h1 className="font-extrabold text-[32px] text-[#222328]">Signup</h1>
+            <p className="mt-2 text-[#666e75] text-[16px] max-w-[600px]">Signup and create images using your imaginary thoughts and share them with your friends</p>
         </div>
 
-        <form className="mt-12 max-w-3xl" onSubmit={ loginUser }>
+        <form className="mt-12 max-w-3xl" onSubmit={ signupUser }>
             <div className="flex flex-col gap-5">
+                <FormField 
+                    LabelName="Name"
+                    type="text"
+                    name="name"
+                    placeholder="Enter name"
+                    value={userData.name}
+                    handleChange={ handleUserDataChange }
+                />
                 <FormField 
                     LabelName="Email"
                     type="email"
@@ -56,29 +59,27 @@ const Login = () => {
                     value={userData.email}
                     handleChange={ handleUserDataChange }
                 />
-
                 <FormField 
                     LabelName="Password"
                     type="password"
                     name="password"
                     placeholder="Enter password"
                     value={userData.password}
-                    handleChange={handleUserDataChange}
+                    handleChange={ handleUserDataChange }
                 />
-                <p>Don't have any account? <Link to='/signup' className="text-[blue]">Signup</Link></p>
+                <p>Already have an account? <Link to='/login' className="text-[blue]">Login</Link></p>
                 <div className="mt-5">
                     <button type="submit"
                         className="text-white bg-blue-700 font-medium  rounded-md text-sm w-full 
                         px-10 py-3 text-center"
                     >
-                        Login
+                        Signup
                     </button>
                 </div>
             </div>
         </form>
-            
     </section>
   )
 }
 
-export default Login
+export default Signup
