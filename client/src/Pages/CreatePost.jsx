@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import axios from 'axios'
 import { preview } from '../assets'
 import { getRandomPrompt } from '../utils'
 import { Loader, FormField } from '../components'
-
-const CreatePost = () => {
+import config from '../config'
+ 
+const CreatePost = () => { 
     const navigate = useNavigate();
     const [form, setForm] = useState({
         name: '',
@@ -14,13 +16,44 @@ const CreatePost = () => {
     const [generatingImg, setGeneratingImg] = useState(false);
     const [loading, setLoading] = useState(false);
 
-    const generateImage = () => {
-
+    const generateImage = async () => {
+        if(form.prompt){
+            try {
+                setGeneratingImg(true);
+                const response = await axios.post(`${config.API_URL}/api/v1/dalle`, { prompt: form.prompt });
+                setForm({
+                  ...form,
+                  photo: `data:image/jpeg;base64,${response.data.photo}`
+                })
+            } catch (err) {
+                console.log(err);
+                alert(err);
+            } finally {
+              setGeneratingImg(false);
+            }
+        }else {
+            alert('Please enter a prompt');
+        }
     }
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(form)
+        if( form.prompt && form.photo ){
+            try {
+                setLoading(true);
+                let response = await axios.post(`${config.API_URL}/api/v1/post`, { ...form });
+                console.log(response)
+                navigate('/');
+            } catch (err) {
+                console.log(err);
+                alert(err);
+            } finally {
+                setLoading(false);
+            }
+        }else {
+            alert('Please enter a prompt and generate an image');
+        }
+        
     }
 
     const handleChange = (e) => {

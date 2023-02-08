@@ -1,13 +1,15 @@
 import React, { useState, useEffect } from 'react'
+import axios from 'axios'
 import { Card, Loader, FormField } from '../components';
+import config from '../config'
 
 const RenderCards = ({ data, title}) => {
     if(data?.length > 0) {
         return data.map((post)=> {
-            <Card key={post._id} {...post} />
-        })
+            return <Card key={post._id} {...post} />
+        }) 
     }
-
+ 
     return (
         <h2 className="mt-5 font-bold text-[#6449ff] text-xl uppercase">{title}</h2>
     )
@@ -17,6 +19,24 @@ const Home = () => {
     const [loading, setLoading] = useState(false);
     const [allPosts, setAllPosts] = useState(null);
     const [searchText, setSeachText] = useState('');
+
+    useEffect(() => {
+        fetchPosts();
+    }, [])
+
+    const fetchPosts = async () => {
+        setLoading(true);
+        try {
+            let response = await axios.get(`${config.API_URL}/api/v1/post`);
+            console.log(response.data.data)
+            setAllPosts(response.data.data.reverse());
+        } catch (err) {
+            console.log(err);
+            alert(err);
+        } finally {
+            setLoading(false);
+        }
+    }
 
   return (
     <section className="max-w-7xl mx-auto">
@@ -46,9 +66,9 @@ const Home = () => {
 
                         <div className="grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-3">
                             {(searchText)? (
-                                <RenderCards data={[]} title="No search results found" />
+                                <RenderCards data={ allPosts } title="No search results found" />
                             ): (
-                                <RenderCards data={[]} title="No posts found" />
+                                <RenderCards data={ allPosts } title="No posts found" />
                             )}
                         </div>
                     </>
