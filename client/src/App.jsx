@@ -2,7 +2,7 @@
 import React from 'react'
 import { BrowserRouter, Link, Route, Routes} from 'react-router-dom';
 import { logo } from './assets';
-import { Home, CreatePost } from './Pages';
+import { Home, CreatePost, Login } from './Pages';
  
 const App = () => { 
   return (
@@ -33,6 +33,7 @@ const App = () => {
           <Routes>
               <Route path='/' element={ <Home /> } />
               <Route path='/create-post' element={ <CreatePost /> } />
+              <Route path='/login' element={ <Login /> } />
           </Routes>
       </main>
     </BrowserRouter>
