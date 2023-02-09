@@ -1,7 +1,9 @@
 import React, { useState } from 'react'
 import axios from 'axios'
-import { Loader, FormField } from '../components';
 import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { Loader, FormField } from '../components';
+import { login } from '../redux/auth/authAction'
 import config from '../config'
 
 const Signup = () => {
@@ -11,6 +13,7 @@ const Signup = () => {
         password: ''
     })
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleUserDataChange = (e) => {
         setUserData({
@@ -22,9 +25,10 @@ const Signup = () => {
     const signupUser = async (e) => { 
         e.preventDefault();
         if(userData.name && userData.email && userData.password){ 
-            try {
+            try { 
                 let response = await axios.post(`${config.API_URL}/auth/signup`, {...userData});
                 if(response.data.success){
+                    dispatch(login(response.data.name, response.data.token));
                     alert(response.data.message);
                     navigate('/')
                 }
@@ -34,6 +38,7 @@ const Signup = () => {
             }
         }
     }
+    
   return (
     <section className="max-w-7xl mx-auto">
         <div>

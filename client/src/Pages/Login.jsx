@@ -23,14 +23,14 @@ const Login = () => {
     }
 
     const loginUser = async (e) => {
-        e.preventDefault();
+        e.preventDefault(); 
         if(userData.email && userData.password){
             try {
                 setLoading(true);
                 let response = await axios.post(`${config.API_URL}/auth/login`, { ...userData });
                 if(response.data.success){
                     alert(response.data.message);
-                    dispatch(login(response.data.name));
+                    dispatch(login(response.data.name, response.data.token));
                     navigate('/');
                 }
             } catch (err) {

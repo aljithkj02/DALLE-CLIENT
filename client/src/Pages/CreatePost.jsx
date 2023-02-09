@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
+import { useDispatch } from 'react-redux'
 import { preview } from '../assets'
 import { getRandomPrompt } from '../utils'
 import { Loader, FormField } from '../components'
 import config from '../config'
+import { logout } from '../redux/auth/authAction'
  
 const CreatePost = () => { 
     const navigate = useNavigate();
@@ -15,6 +17,8 @@ const CreatePost = () => {
     })
     const [generatingImg, setGeneratingImg] = useState(false);
     const [loading, setLoading] = useState(false);
+    
+    const dispatch = useDispatch();
 
     const generateImage = async () => {
         if(form.prompt){
@@ -41,12 +45,18 @@ const CreatePost = () => {
         if( form.prompt && form.photo ){
             try {
                 setLoading(true);
-                let response = await axios.post(`${config.API_URL}/api/v1/post`, { ...form });
-                console.log(response)
+                let token = localStorage.getItem('token') || '';
+
+                let response = await axios.post(`${config.API_URL}/api/v1/post`, { ...form }, {
+                  headers: {
+                    "authorization": `Bearer ${token}`
+                  }
+                });
                 navigate('/');
             } catch (err) {
-                console.log(err);
-                alert(err);
+                console.log(err.response.data.message);
+                dispatch(logout());
+                alert(err.response.data.message);
             } finally {
                 setLoading(false);
             }

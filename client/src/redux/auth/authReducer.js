@@ -1,7 +1,10 @@
-
+let token = localStorage.getItem('token') || '';
+let name = localStorage.getItem('name') || '';
+let isAuth = (token) ? true : false;
 let defaultData = {
-    isAuth: false,
-    name: ''
+    isAuth,
+    name,
+    token
 }
 
 const authReducer = (state = defaultData, action) => {
@@ -9,13 +12,15 @@ const authReducer = (state = defaultData, action) => {
         return {
             ...state,
             isAuth: true,
-            name: action.payload
+            name: action.payload.name,
+            token: action.payload.token
         }
     }else if(action.type === 'LOGOUT'){
         return {
             ...state,
             isAuth: false,
-            name: ''
+            name: '',
+            token: ''
         }
     }
     return state;
