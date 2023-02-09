@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import axios from 'axios';
-import { Loader, FormField } from '../components';
 import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { Loader, FormField } from '../components';
 import config from '../config.js';
+import { login } from '../redux/auth/authAction'
 
 const Login = () => {
     const [loading, setLoading] = useState(false);
@@ -11,6 +13,7 @@ const Login = () => {
         password: ''
     })
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
     const handleUserDataChange = (e) => {
         setUserData({
@@ -25,9 +28,9 @@ const Login = () => {
             try {
                 setLoading(true);
                 let response = await axios.post(`${config.API_URL}/auth/login`, { ...userData });
-                console.log(response);
                 if(response.data.success){
                     alert(response.data.message);
+                    dispatch(login(response.data.name));
                     navigate('/');
                 }
             } catch (err) {
