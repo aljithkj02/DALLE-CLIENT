@@ -5,6 +5,8 @@ import { useDispatch } from 'react-redux'
 import { Loader, FormField } from '../components';
 import { login } from '../redux/auth/authAction'
 import config from '../config'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Signup = () => {
     const [userData, setUserData] = useState({
@@ -28,19 +30,42 @@ const Signup = () => {
             try { 
                 let response = await axios.post(`${config.API_URL}/auth/signup`, {...userData});
                 if(response.data.success){
-                    dispatch(login(response.data.name, response.data.token));
-                    alert(response.data.message);
-                    navigate('/')
+                    const notify = () => toast.success(response.data.message, {
+                        position: "top-center",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                    });
+                    notify();
+                    setTimeout(() => {
+                        dispatch(login(response.data.name, response.data.token));
+                        navigate('/')
+                    }, 2000)
                 }
             } catch (err) {
                 console.log(err);
-                alert(err.response.data.message);
+                const notify = () => toast.error(err.response.data.message, {
+                    position: "top-center",
+                    autoClose: 4000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+                notify();
             }
         }
     }
     
   return (
     <section className="max-w-7xl mx-auto">
+        <ToastContainer />
         <div>
             <h1 className="font-extrabold text-[32px] text-[#222328]">Signup</h1>
             <p className="mt-2 text-[#666e75] text-[16px] max-w-[600px]">Signup and create images using your imaginary thoughts and share them with your friends</p>

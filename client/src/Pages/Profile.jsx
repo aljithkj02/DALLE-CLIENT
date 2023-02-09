@@ -44,23 +44,23 @@ const Profile = () => {
     }
   return (
     <section className="max-w-7xl mx-auto ">
-        <div className="flex items-center">
+        <div className="flex items-center max-sm:flex-col">
             <div className="w-40 h-40">
                 <img className="w-full h-full rounded-full" src={posts[0]?.photo || "https://p.kindpng.com/picc/s/21-211456_user-icon-hd-png-download.png"} alt="profile pic"/>
             </div>
             <div className="mx-10">
-                <h1 className="text-2xl ">{ name[0].toUpperCase() + name.substring(1) }</h1>
-                <p className="text-md mt-2">{size} Posts</p>
+                <h1 className="text-2xl max-sm:text-center mt-2">{ name[0].toUpperCase() + name.substring(1) }</h1>
+                <p className="text-md mt-2 max-sm:text-center">{size} Posts</p>
             </div>
         </div>
 
-        <div className="mt-20 ">
+        <div className="mt-14">
             <p className="flex items-center max-w-[100px] justify-center">
                 <span className="material-symbols-outlined text-gray-500 mx-2"> grid_on </span>  Posts
             </p>
         </div>
 
-        <div className="grid sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-5 mt-10">
+        <div className="grid sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-5 mt-6">
             { <RenderCards data={ posts } title="No posts" />}
         </div>
         

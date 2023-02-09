@@ -5,6 +5,8 @@ import { useDispatch } from 'react-redux'
 import { Loader, FormField } from '../components';
 import config from '../config.js';
 import { login } from '../redux/auth/authAction'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const Login = () => {
     const [loading, setLoading] = useState(false);
@@ -29,13 +31,35 @@ const Login = () => {
                 setLoading(true);
                 let response = await axios.post(`${config.API_URL}/auth/login`, { ...userData });
                 if(response.data.success){
-                    alert(response.data.message);
-                    dispatch(login(response.data.name, response.data.token));
-                    navigate('/');
+                    const notify = () => toast.success(response.data.message, {
+                        position: "top-center",
+                        autoClose: 2000,
+                        hideProgressBar: false,
+                        closeOnClick: true,
+                        pauseOnHover: true,
+                        draggable: true,
+                        progress: undefined,
+                        theme: "dark",
+                    });
+                    notify();
+                    setTimeout(()=> {
+                        dispatch(login(response.data.name, response.data.token));
+                        navigate('/');
+                    }, 2000)
                 }
             } catch (err) {
                 console.log(err);
-                alert(err.response.data.message);
+                const notify = () => toast.error(err.response.data.message, {
+                    position: "top-center",
+                    autoClose: 4000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+                notify();
             } finally {
                 setLoading(false);
             }
@@ -43,7 +67,8 @@ const Login = () => {
     }
   return (
     <section className="max-w-7xl mx-auto">
-        
+
+        <ToastContainer />
         <div>
             <h1 className="font-extrabold text-[32px] text-[#222328]">Login</h1>
             <p className="mt-2 text-[#666e75] text-[16px] max-w-[600px]">Login and create images using your imaginary thoughts and share them with your friends</p>

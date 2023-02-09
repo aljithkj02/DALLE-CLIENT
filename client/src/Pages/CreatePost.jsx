@@ -7,6 +7,8 @@ import { getRandomPrompt } from '../utils'
 import { Loader, FormField } from '../components'
 import config from '../config'
 import { logout } from '../redux/auth/authAction'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
  
 const CreatePost = () => { 
     const navigate = useNavigate();
@@ -28,7 +30,7 @@ const CreatePost = () => {
                 setForm({
                   ...form,
                   photo: `data:image/jpeg;base64,${response.data.photo}`
-                })
+                })    
             } catch (err) {
                 console.log(err);
                 alert(err);
@@ -36,7 +38,17 @@ const CreatePost = () => {
               setGeneratingImg(false);
             }
         }else {
-            alert('Please enter a prompt');
+            const notify = () => toast.info('Please enter a prompt!', {
+                position: "top-center",
+                autoClose: 4000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+            notify();
         }
     }
 
@@ -56,12 +68,33 @@ const CreatePost = () => {
             } catch (err) {
                 console.log(err.response.data.message);
                 dispatch(logout());
-                alert(err.response.data.message);
+                
+                const notify = () => toast.error(err.response.data.message, {
+                    position: "top-center",
+                    autoClose: 4000,
+                    hideProgressBar: false,
+                    closeOnClick: true,
+                    pauseOnHover: true,
+                    draggable: true,
+                    progress: undefined,
+                    theme: "dark",
+                });
+                notify();
             } finally {
                 setLoading(false);
             }
         }else {
-            alert('Please enter a prompt and generate an image');
+            const notify = () => toast.info('Please enter a prompt and generate an image!', {
+                position: "top-center",
+                autoClose: 4000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+                });
+            notify();
         }
         
     }
@@ -83,6 +116,7 @@ const CreatePost = () => {
 
   return (
     <section className="max-w-7xl mx-auto">
+      <ToastContainer />
         <div>
             <h1 className="font-extrabold text-[#222328] text-[32px]" >Create</h1>
             <p className="mt-2 text-[#666e75] text-[16px] max-w-[600px]">Create imaginative and visually stunning images through by DALL-E AI and share them with the community</p>
