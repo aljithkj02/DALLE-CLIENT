@@ -17,20 +17,25 @@ const RenderCards = ({ data, title}) => {
 
 const Home = () => {
     const [loading, setLoading] = useState(false);
-    const [allPosts, setAllPosts] = useState(null);
-    const [searchText, setSeachText] = useState('');
-    const [searchedResults, setSearchedResults] = useState(null);
+    const [allPosts, setAllPosts] = useState([]);
+    const [noPost, setNoPost] = useState(false);
+    const [skip, setSkip] = useState(0); 
+    const [searchText, setSearchText] = useState('');
+    const [searching, setSearching] = useState(false);
+    const [searchedResults, setSearchedResults] = useState([]);
     const debounceId = useRef(null);
+    const divRef = useRef(null);
 
     useEffect(() => {
-        fetchPosts();
-    }, [])
+        if(!searching) fetchPosts();
+    }, [skip])
 
     const fetchPosts = async () => {
         setLoading(true);
         try {
-            let response = await axios.get(`${config.API_URL}/api/v1/post`);
-            setAllPosts(response.data.data.reverse());
+            let response = await axios.get(`${config.API_URL}/api/v1/post?skip=${skip}&limit=5`);
+            setAllPosts([...allPosts, ...response.data.data.reverse()]);
+            if(response.data.data.length == 0) setNoPost(true);
         } catch (err) {
             console.log(err);
             alert(err);
@@ -39,19 +44,62 @@ const Home = () => {
         }
     }
 
-    const handleSearchChange = async (e) => {
-        debounceId.current && clearTimeout(debounceId.current);
-        setSeachText(e.target.value);
+    // const handleSearchChange = async (e) => {
+    //     debounceId.current && clearTimeout(debounceId.current);
+    //     setSeachText(e.target.value);
+    //     setNoPost(false);
 
-        debounceId.current = setTimeout(() => {
-            const searchResults = allPosts.filter((item) => {
-                return ( 
-                    item.name.toLowerCase().includes(e.target.value.toLowerCase()) || 
-                    item.prompt.toLowerCase().includes(e.target.value.toLowerCase()) )
-            })
-            setSearchedResults(searchResults);
-        }, 1000);
+    //     debounceId.current = setTimeout(() => {
+    //         const searchResults = allPosts.filter((item) => {
+    //             return ( 
+    //                 item.name.toLowerCase().includes(e.target.value.toLowerCase()) || 
+    //                 item.prompt.toLowerCase().includes(e.target.value.toLowerCase()) )
+    //         })
+    //         setSearchedResults(searchResults);
+    //     }, 1000);
+    // }
+
+    const fetchSearchPost = async (query) => {
+        setLoading(true);
+        setNoPost(false);
+        try {
+            let res = await axios.get(`${config.API_URL}/api/v1/post/search?q=${query}`);
+            setSearchedResults([...res.data.data.reverse()]);
+        } catch (err) {
+            console.log(err.message);
+        } finally{
+            setLoading(false);
+        }
     }
+
+    const handleSearchChange = async (e) => {
+        let val = e.target.value;
+        setSearchText(val);
+        if(val) {
+            setSearching(true);
+            debouncer(() => fetchSearchPost(val), 1000)();
+        }else{
+            setSearching(false);
+            setSkip(0);
+        }
+    }
+
+    const debouncer = (fn, delay) => {
+        return () => {
+            debounceId.current && clearTimeout(debounceId.current);
+            debounceId.current = setTimeout(() => {
+                fn();
+            }, delay)
+        }
+    }
+
+    const handlerScroll = () => { 
+        if(Math.floor(window.innerHeight + document.documentElement.scrollTop + 1 )  >= document.documentElement.offsetHeight){
+            setSkip(allPosts.length);
+        }
+    }
+    window.onscroll = handlerScroll;
+
 
   return (
     <section className="max-w-7xl mx-auto"> 
@@ -73,27 +121,33 @@ const Home = () => {
 
         <div className="mt-10">
             {
-                (loading)? (
-                    <div className="flex justify-center align-center">
+                <>
+                    { searchText && (
+                        <h2 className="font-medium text-[#666e75] text-xl mb-3">
+                            Showing results for <span className="text-[#222328]"> {searchText} </span>
+                        </h2> 
+                    ) }
+
+                    <div className="grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-3" 
+                            ref={ divRef }
+                    >
+                        {(searchText)? (
+                            <RenderCards data={ searchedResults } title="No search results found" />
+                        ): (
+                            <RenderCards data={ allPosts } title="No posts found" />
+                        )}
+                    </div>
+                </>
+            }
+            {
+                (loading) && (
+                    <div className="flex justify-center align-center mt-10">
                         <Loader />
                     </div>
-                ): (
-                    <>
-                        { searchText && (
-                            <h2 className="font-medium text-[#666e75] text-xl mb-3">
-                                Showing results for <span className="text-[#222328]"> {searchText} </span>
-                            </h2> 
-                        ) }
-
-                        <div className="grid lg:grid-cols-4 sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-3">
-                            {(searchText)? (
-                                <RenderCards data={ searchedResults } title="No search results found" />
-                            ): (
-                                <RenderCards data={ allPosts } title="No posts found" />
-                            )}
-                        </div>
-                    </>
                 )
+            }
+            {
+                noPost && <h1 className="text-center text-lg font-medium mt-10">No more posts!</h1>
             }
         </div>
 
