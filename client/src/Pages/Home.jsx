@@ -44,27 +44,12 @@ const Home = () => {
         }
     }
 
-    // const handleSearchChange = async (e) => {
-    //     debounceId.current && clearTimeout(debounceId.current);
-    //     setSeachText(e.target.value);
-    //     setNoPost(false);
-
-    //     debounceId.current = setTimeout(() => {
-    //         const searchResults = allPosts.filter((item) => {
-    //             return ( 
-    //                 item.name.toLowerCase().includes(e.target.value.toLowerCase()) || 
-    //                 item.prompt.toLowerCase().includes(e.target.value.toLowerCase()) )
-    //         })
-    //         setSearchedResults(searchResults);
-    //     }, 1000);
-    // }
-
     const fetchSearchPost = async (query) => {
         setLoading(true);
         setNoPost(false);
         try {
             let res = await axios.get(`${config.API_URL}/api/v1/post/search?q=${query}`);
-            setSearchedResults([...res.data.data.reverse()]);
+            setSearchedResults([...res.data.data]);
         } catch (err) {
             console.log(err.message);
         } finally{
