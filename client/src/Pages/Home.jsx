@@ -20,6 +20,7 @@ const Home = () => {
     const [allPosts, setAllPosts] = useState([]);
     const [noPost, setNoPost] = useState(false);
     const [skip, setSkip] = useState(0); 
+    const [update, setUpdate] = useState(false); 
     const [searchText, setSearchText] = useState('');
     const [searching, setSearching] = useState(false);
     const [searchedResults, setSearchedResults] = useState([]);
@@ -28,7 +29,7 @@ const Home = () => {
 
     useEffect(() => {
         if(!searching) fetchPosts();
-    }, [skip])
+    }, [skip, update])
 
     const fetchPosts = async () => {
         setLoading(true);
@@ -65,7 +66,9 @@ const Home = () => {
             debouncer(() => fetchSearchPost(val), 1000)();
         }else{
             setSearching(false);
+            setAllPosts([]);
             setSkip(0);
+            setUpdate(!update);
         }
     }
 

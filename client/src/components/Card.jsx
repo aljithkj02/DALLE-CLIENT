@@ -1,11 +1,13 @@
 import React from 'react'
-import axios from 'axios'
+import { useNavigate } from 'react-router-dom'
 
 import { download } from '../assets';
 import { downloadImage, getRelativeTime } from '../utils'
 import config from '../config'
 
 const Card = ({ _id, name, prompt, photo, normalCard, handler, createdAt}) => {
+  const navigate = useNavigate();
+  
   return (normalCard) ? (
     <div className="rounded-xl group relative shadow-card hover:shadow-cardhover">
       <img src={photo} alt={prompt}  
@@ -38,7 +40,9 @@ const Card = ({ _id, name, prompt, photo, normalCard, handler, createdAt}) => {
     </div>
   ):
   (
-    <div className="rounded-xl group relative shadow-card hover:shadow-cardhover card ">
+    <div className="rounded-xl group relative shadow-card hover:shadow-cardhover card "
+      onClick={() => navigate(`/details/${_id}`)}
+    >
       <img src={photo} alt={prompt}  
         className="w-full h-auto object-cover rounded-xl"
       />

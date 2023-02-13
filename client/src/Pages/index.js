@@ -4,6 +4,7 @@ import Login from './Login'
 import Signup from './Signup'
 import Profile from './Profile'
 import Navbar from './Navbar'
+import PostDetails from './PostDetails'
 
 export {
     Home,
@@ -11,5 +12,6 @@ export {
     Login,
     Signup,
     Profile,
-    Navbar
+    Navbar,
+    PostDetails
 }

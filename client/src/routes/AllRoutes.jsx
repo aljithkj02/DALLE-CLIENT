@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter, Link, Route, Routes} from 'react-router-dom';
-import { Home, CreatePost, Login, Signup, Profile } from '../Pages';
+import { Home, CreatePost, Login, Signup, Profile, PostDetails } from '../Pages';
 import PrivateRoute from './PrivateRoute';
 
 const AllRoutes = () => {
@@ -11,6 +11,7 @@ const AllRoutes = () => {
             <Route path='/login' element={ <Login /> } />
             <Route path='/signup' element={ <Signup />} />
             <Route path='/profile' element={ <PrivateRoute> <Profile /> </PrivateRoute> } />
+            <Route path='/details/:id' element={ <PrivateRoute> <PostDetails /> </PrivateRoute> } />
         </Routes>
   )
 }

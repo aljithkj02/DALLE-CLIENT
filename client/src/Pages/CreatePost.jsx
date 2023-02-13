@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { preview } from '../assets'
 import { getRandomPrompt } from '../utils'
 import { Loader, FormField } from '../components'
@@ -16,6 +16,7 @@ const CreatePost = () => {
         prompt: '',
         photo: ''
     })
+    const { token } = useSelector(data => data);
     const [generatingImg, setGeneratingImg] = useState(false);
     const [loading, setLoading] = useState(false);
     
@@ -56,7 +57,6 @@ const CreatePost = () => {
         if( form.prompt && form.photo ){
             try {
                 setLoading(true);
-                let token = localStorage.getItem('token') || '';
 
                 let response = await axios.post(`${config.API_URL}/api/v1/post`, { ...form }, {
                   headers: {
