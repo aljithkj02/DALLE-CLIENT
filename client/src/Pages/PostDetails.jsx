@@ -8,11 +8,13 @@ import { Card, Comment, FormField } from '../components'
 const PostDetails = () => {
     const { id } = useParams();
     const [comment, setComment] =  useState('');
+    const [allComments, setAllComments] = useState([]);
     const [postData, setPostData] = useState(null);
+    const [update, setUpdate] = useState(false);
     const { token } = useSelector(data => data);
     useEffect(() => {
         fetchPosts(id);
-    }, []);
+    }, [update]);
 
     const fetchPosts = async (id) => {
         try {
@@ -23,6 +25,7 @@ const PostDetails = () => {
             });
             if(res.data.success){
                 setPostData(res.data.data);
+                setAllComments([...res.data.data.comments.reverse()]);
             }
         } catch (err) {
             console.log(err);
@@ -44,7 +47,10 @@ const PostDetails = () => {
                         'authorization' : `Bearer ${token}`
                     }
                 })
+
                 console.log(res);
+                setComment("");
+                setUpdate(!update);
             } catch (err) {
                 console.log(err);
             }
@@ -82,8 +88,11 @@ const PostDetails = () => {
                 </div>
 
                 <div className="mt-4">
-                    <Comment />
-                    <Comment />
+                    {
+                        allComments.map((ele) => {
+                            return <Comment key={ele.comment+ele.name} {...ele} />
+                        })
+                    }
                 </div>
             </div>
         </div>
