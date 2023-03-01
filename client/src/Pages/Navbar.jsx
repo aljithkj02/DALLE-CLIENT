@@ -20,7 +20,7 @@ const Navbar = ({ isOpen, handleIsOpen }) => {
     }
   return (
     <header className="w-full flex justify-between items-center bg-white
-        sm:px-8 px-4 py-4 border-b border-b-[#e6ebf4]">
+        sm:px-8 px-4 py-4 border-b border-b-[#e6ebf4] fixed z-10">
           { 
             dialog && <Dialog message="Logout from openAi?" handlerNo={ ()=> setDialog(false) }
               handlerYes={ logoutUser }

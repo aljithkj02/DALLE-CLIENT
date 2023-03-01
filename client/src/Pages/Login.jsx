@@ -66,7 +66,7 @@ const Login = () => {
         }
     }
   return (
-    <section className="max-w-7xl mx-auto">
+    <section className="max-w-7xl mx-auto mt-20">
 
         <ToastContainer />
         <div>

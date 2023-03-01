@@ -26,13 +26,56 @@ const Signup = () => {
 
     const signupUser = async (e) => { 
         e.preventDefault();
-        if(userData.name && userData.email && userData.password){ 
-            try { 
-                let response = await axios.post(`${config.API_URL}/auth/signup`, {...userData});
-                if(response.data.success){
-                    const notify = () => toast.success(response.data.message, {
+        if(userData.password.length < 6){
+            const notify = () => toast.warning('Password should be atleast 6 characters!', {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+            notify();
+        }else if(userData.password.includes(' ')){
+            const notify = () => toast.warning('Password should not contains empty spaces!!', {
+                position: "top-center",
+                autoClose: 2000,
+                hideProgressBar: false,
+                closeOnClick: true,
+                pauseOnHover: true,
+                draggable: true,
+                progress: undefined,
+                theme: "dark",
+            });
+            notify();
+        }else{
+            if(userData.name && userData.email && userData.password){ 
+                try { 
+                    let response = await axios.post(`${config.API_URL}/auth/signup`, {...userData});
+                    if(response.data.success){
+                        const notify = () => toast.success(response.data.message, {
+                            position: "top-center",
+                            autoClose: 2000,
+                            hideProgressBar: false,
+                            closeOnClick: true,
+                            pauseOnHover: true,
+                            draggable: true,
+                            progress: undefined,
+                            theme: "dark",
+                        });
+                        notify();
+                        setTimeout(() => {
+                            dispatch(login(response.data.name, response.data.token));
+                            navigate('/')
+                        }, 2000)
+                    }
+                } catch (err) {
+                    console.log(err);
+                    const notify = () => toast.error(err.response.data.message, {
                         position: "top-center",
-                        autoClose: 2000,
+                        autoClose: 4000,
                         hideProgressBar: false,
                         closeOnClick: true,
                         pauseOnHover: true,
@@ -41,30 +84,13 @@ const Signup = () => {
                         theme: "dark",
                     });
                     notify();
-                    setTimeout(() => {
-                        dispatch(login(response.data.name, response.data.token));
-                        navigate('/')
-                    }, 2000)
                 }
-            } catch (err) {
-                console.log(err);
-                const notify = () => toast.error(err.response.data.message, {
-                    position: "top-center",
-                    autoClose: 4000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
-                    progress: undefined,
-                    theme: "dark",
-                });
-                notify();
             }
         }
     }
     
   return (
-    <section className="max-w-7xl mx-auto">
+    <section className="max-w-7xl mx-auto mt-20">
         <ToastContainer />
         <div>
             <h1 className="font-extrabold text-[32px] text-[#222328]">Signup</h1>

@@ -89,7 +89,7 @@ const Profile = () => {
     }
 
   return (
-    <section className="max-w-7xl mx-auto ">
+    <section className="max-w-7xl mx-auto mt-20">
         { 
             dialog && 
             <Dialog message="Do you want to delete?" handlerNo={ ()=> setDialog(false)} handlerYes={deleteImage} /> 
