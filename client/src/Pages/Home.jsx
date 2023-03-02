@@ -35,13 +35,13 @@ const Home = () => {
         setLoading(true);
         try {
             let response = await axios.get(`${config.API_URL}/api/v1/post?skip=${skip}&limit=5`);
-            setAllPosts([...allPosts, ...response.data.data.reverse()]);
+            setAllPosts([...allPosts, ...response.data.data]);
             if(response.data.data.length == 0) setNoPost(true);
         } catch (err) {
             console.log(err);
             alert(err);
         } finally {
-            setLoading(false);
+            setLoading(false); 
         }
     }
 

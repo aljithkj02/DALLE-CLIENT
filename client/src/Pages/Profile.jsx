@@ -26,6 +26,7 @@ const Profile = () => {
     const [size, setSize] = useState(0);
     const [dialog, setDialog] = useState(false);
     const [reload, setReload] = useState(false);
+    const [loading, setLoading] = useState(false);
     const post_id = useRef(null);
 
     const dispatch = useDispatch();
@@ -35,6 +36,7 @@ const Profile = () => {
     }, [reload]);
 
     const fetchPost = async () => {
+        setLoading(true);
         try {
             const token = localStorage.getItem('token') || '';
             let response = await axios.get(`${config.API_URL}/api/v1/post/profile-posts`,{
@@ -45,10 +47,12 @@ const Profile = () => {
             if(response.data.success){
                 setPosts(response.data.data);
                 setSize(response.data.data.length);
+                setLoading(false);
             }
         } catch (err) {
             console.log(err);
             alert(err);
+            setLoading(false);
         }
     }
 
@@ -110,7 +114,10 @@ const Profile = () => {
                 <span className="material-symbols-outlined text-gray-500 mx-2"> grid_on </span>  Posts
             </p>
         </div>
-
+        { loading && 
+            <div className="flex justify-center align-center mt-10">
+                <Loader />
+            </div>}
         <div className="grid sm:grid-cols-3 xs:grid-cols-2 grid-cols-1 gap-5 mt-6">
             { <RenderCards data={ posts } title="No posts" handler={ handleDelete }/>}
         </div>
