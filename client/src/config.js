@@ -1,5 +1,5 @@
 const config = {
-    API_URL: 'http://localhost:8080'
+    API_URL: 'https://tense-robe-newt.cyclic.app'
 }
 
 export default config;
